@@ -18,3 +18,20 @@ elem.send_keys "Ducks"    #send_keys method used to write text
 elem.submit
 
 driver.quit
+
+
+Feature: open the URL " https://jsonplaceholder.typicode.com/posts"
+Given : User is having the url  "https://jsonplaceholder.typicode.com/posts"
+When user enteres URL on the browser
+Then user should see the results of the page.
+
+ 
+require 'rspec'
+require 'page-object'
+include page object
+
+driver = Selenium::WebDriver.for :firefox
+baseurl = "https://jsonplaceholder.typicode.com/posts"
+driver.get(baseurl) 
+
+ 
