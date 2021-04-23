@@ -1,0 +1,11 @@
+1)Request by requiring the Faraday gem and using Faraday.get:
+
+response = Faraday.get 'https://jsonplaceholder.typicode.com/posts'
+
+2)This returns a Faraday::Response object with the response status, headers, and body.
+
+response.status
+
+response.headers
+
+response.body
