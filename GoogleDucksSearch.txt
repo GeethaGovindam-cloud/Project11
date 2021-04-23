@@ -1,0 +1,97 @@
+$ mkdir cucumber-test
+$ cd cucumber-test/
+
+Create a file named with ‘Gemfile’ and then add the following lines into Gemfile
+
+source 'https://rubygems.org'
+gem 'watir'
+gem 'cucumber'
+gem 'page-object'
+ 
+
+Run the below code to install gems for our testing
+ 
+bundle install
+
+Initialize the cucumber for our project using cucumber –init comment, 
+as it will help us to create the cucumber project structure
+
+$ cucumber --init
+ create   features
+ create   features/step_definitions
+ create   features/support
+ create   features/support/env.rb
+
+Add the following lines in features/support/env.rb file
+
+require 'watir'
+require 'page-object'
+Before do
+  @browser = Watir::Browser.new :chrome
+  @browser.window.maximize
+end
+
+Create a file searchgoogleducks.feature under features/ directory and add the following lines.
+
+Feature: google Search functionality for ducks
+  Scenario: searching ducks on google
+    Given a user goes to google home page
+    When a user search for "ducks."
+    Then google should return result for "ducks."
+
+create ‘pages’ directory under ’features’ directory
+
+create search_page.rb file under features/pages directory, then add the following code
+
+class SearchPage
+  include PageObject
+ 
+  text_field(:search_box, id: "twotabsearchtextbox")
+  button(:search, value: "Go")
+  div(:search_results, id: "search")
+ 
+  def visit_google_site
+    @browser.goto 'http://www.google.com'
+  end
+ 
+  def enter_search_keyword(search_key)
+    self.search_box = search_key
+  end
+ 
+  def click_search_button
+    search
+  end
+ 
+  def search_results_present?(search_key)
+    search_results.include?(search_key)
+  end
+ 
+  def close
+    @browser.close
+  end
+end
+
+ Create a file named “googleducks_search_step.rb” under features/step_definitions directory and add the following lines.
+
+require_relative '../pages/search_page.rb'
+ 
+Given(/^a user goes to Google home page$/) do
+  @google_page = SearchPage.new(@browser)
+  @google_page.visit_google_site
+end
+ 
+When(/^a user search for "([^"]*)"$/) do |keyword|
+  @google_page.search_box_element.wait_until(&:present?)
+  @google_page.enter_search_keyword(keyword)
+  @google_page.click_search_button
+end
+ 
+Then(/^google should return result for "([^"]*)"$/) do |arg|
+  expect(@google_page.search_results_present?(arg)).to eql(true)
+  @google_page.close
+end
+
+
+run the cucumber test using the following command.
+
+$ cucumber features/amazonsearch.feature
